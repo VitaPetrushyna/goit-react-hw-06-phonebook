@@ -1,21 +1,29 @@
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact } from '../../redux/contactsSlice';
+import { getContacts } from '../../redux/selectors';
+
 import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { nanoid } from 'nanoid';
+// import PropTypes from 'prop-types';
 import { Form, AddBtn, InputData, LabelData } from './ContactForm.styled';
 
-export default function ContactForm({ addContact }) {
-  const [name, SetName] = useState('');
-  const [number, SetNumber] = useState('');
+export default function ContactForm() {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+
+  const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
 
   const handleChange = event => {
     const { name, value } = event.currentTarget;
 
     switch (name) {
       case 'name':
-        SetName(value);
+        setName(value);
         break;
 
       case 'number':
-        SetNumber(value);
+        setNumber(value);
         break;
 
       default:
@@ -26,13 +34,28 @@ export default function ContactForm({ addContact }) {
   const handleSubmit = event => {
     event.preventDefault();
 
-    addContact({ name, number });
+    const newElement = { id: nanoid(), name, number };
+
+    const action = addContact(newElement);
+
+    const findName = contacts.find(
+      contact => contact.name === action.payload.name
+    );
+
+    if (findName) {
+      alert(`${action.payload.name} is already in your contacts list`, {
+        autoClose: 1000,
+      });
+      return;
+    }
+
+    dispatch(action);
     reset();
   };
 
   const reset = () => {
-    SetName('');
-    SetNumber('');
+    setName('');
+    setNumber('');
   };
 
   return (
@@ -44,7 +67,7 @@ export default function ContactForm({ addContact }) {
           name="name"
           pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-          // required
+          required
           value={name}
           onChange={handleChange}
         />
@@ -56,7 +79,7 @@ export default function ContactForm({ addContact }) {
           name="number"
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-          // required
+          required
           value={number}
           onChange={handleChange}
         />
@@ -66,6 +89,6 @@ export default function ContactForm({ addContact }) {
   );
 }
 
-ContactForm.propTypes = {
-  addContact: PropTypes.func.isRequired,
-};
+// ContactForm.propTypes = {
+//   addContact: PropTypes.func.isRequired,
+// };

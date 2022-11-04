@@ -1,17 +1,39 @@
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
+import { getContacts, getFilter } from 'redux/selectors';
+import { deleteContact } from 'redux/contactsSlice';
+
+// import PropTypes from 'prop-types';
 import { ListContacts, ContactsItem, DeleteBtn } from './ContactList.styled';
 
-const ContactList = ({ contacts, onDeleteContact }) => {
+const ContactList = () => {
+  const contacts = useSelector(getContacts);
+  const filter = useSelector(getFilter);
+  const dispatch = useDispatch();
+
+  const handleDeleteContact = deleteId => {
+    const action = deleteContact(deleteId);
+    dispatch(action);
+  };
+
+  const filtredContacts = () => {
+    // const normalizedFilter = filter.toLowerCase();
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filter)
+    );
+  };
+
+  const filteredContactList = filtredContacts();
+
   return (
     <ListContacts>
-      {contacts.map(({ name, number, id }) => (
+      {filteredContactList.map(({ name, number, id }) => (
         <ContactsItem key={id}>
           {name + ' : ' + number}
           {
             <DeleteBtn
               type="button"
               name="delete"
-              onClick={() => onDeleteContact(id)}
+              onClick={() => handleDeleteContact(id)}
             >
               Delete
             </DeleteBtn>
@@ -22,15 +44,15 @@ const ContactList = ({ contacts, onDeleteContact }) => {
   );
 };
 
-ContactList.propTypes = {
-  onDeleteContact: PropTypes.func.isRequired,
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    }).isRequired
-  ).isRequired,
-};
+// ContactList.propTypes = {
+//   onDeleteContact: PropTypes.func.isRequired,
+//   contacts: PropTypes.arrayOf(
+//     PropTypes.shape({
+//       id: PropTypes.string.isRequired,
+//       name: PropTypes.string.isRequired,
+//       number: PropTypes.string.isRequired,
+//     }).isRequired
+//   ).isRequired,
+// };
 
 export default ContactList;
