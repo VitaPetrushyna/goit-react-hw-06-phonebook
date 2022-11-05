@@ -5,7 +5,7 @@ import { deleteContact } from 'redux/contactsSlice';
 // import PropTypes from 'prop-types';
 import { ListContacts, ContactsItem, DeleteBtn } from './ContactList.styled';
 
-const ContactList = () => {
+export default function ContactList() {
   const contacts = useSelector(getContacts);
   const filter = useSelector(getFilter);
   const dispatch = useDispatch();
@@ -16,9 +16,9 @@ const ContactList = () => {
   };
 
   const filtredContacts = () => {
-    // const normalizedFilter = filter.toLowerCase();
+    const normalizedFilter = filter.toLowerCase();
     return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(filter)
+      contact.name.toLowerCase().includes(normalizedFilter)
     );
   };
 
@@ -42,7 +42,7 @@ const ContactList = () => {
       ))}
     </ListContacts>
   );
-};
+}
 
 // ContactList.propTypes = {
 //   onDeleteContact: PropTypes.func.isRequired,
@@ -55,4 +55,4 @@ const ContactList = () => {
 //   ).isRequired,
 // };
 
-export default ContactList;
+// export default ContactList;

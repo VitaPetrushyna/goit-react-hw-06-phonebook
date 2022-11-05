@@ -10,8 +10,8 @@ const Filter = () => {
 
   const dispatch = useDispatch();
 
-  const handleFilterInput = e => {
-    const { value } = e.target;
+  const handleFilterInput = event => {
+    const { value } = event.target;
     const action = setFilter(value);
     dispatch(action);
   };
