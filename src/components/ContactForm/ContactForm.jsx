@@ -39,13 +39,15 @@ export default function ContactForm() {
     const action = addContact(newElement);
 
     const findName = contacts.find(
-      contact => contact.name === action.payload.name
+      contact =>
+        contact.name.toLowerCase() === action.payload.name.toLowerCase()
     );
 
     if (findName) {
       alert(`${action.payload.name} is already in your contacts list`, {
         autoClose: 1000,
       });
+      reset();
       return;
     }
 
